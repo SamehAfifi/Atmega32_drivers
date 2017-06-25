@@ -1,8 +1,8 @@
 /*
- * usart.c
+ * uart.c
  *
  * Created: 12/7/2014 5:10:39 PM
- *  Author: Administrator
+ *  Author: safifi
  */ 
 
 

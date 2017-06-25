@@ -23,5 +23,5 @@ int8_t keypad_click(){
 	k1(1);k2(0);k3(1);k4(1);	k = press(1); if(k != -1)	return k;
 	k1(1);k2(1);k3(0);k4(1);	k = press(2); if(k != -1)	return k;
 	k1(1);k2(1);k3(1);k4(0);	k = press(3); if(k != -1)	return k;
-	return -1;
+	return k;
 }

@@ -1,3 +1,9 @@
+/*
+ * lcd.h
+ *
+ * Created: 13/26/2014 7:40:00 PM
+ *  Author: safifi
+ */
 #include "std_macros.h"
 #define clear 0x01
 #define home  0x02

@@ -2,7 +2,7 @@
  * timers.c
  *
  * Created: 12/27/2014 12:54:18 AM
- *  Author: Administrator
+ *  Author: safifi
  */ 
 #include"timers.h"
 uint64_t t1 = 0;
