@@ -1,5 +1,5 @@
 /*
- * ADC.c
+ * ADC
  *
  * Created: 11/26/2014 5:46:08 PM
  *  Author: safifi
