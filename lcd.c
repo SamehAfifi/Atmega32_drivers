@@ -30,6 +30,13 @@ uint8_t txt[5];
 
 void lcd_init(){
 	INIT_PORT;
+	// To clear Data on the LCD at Startup
+	D7(0);D6(0);D5(1);D4(1);
+	lcd_send_pulse_for_update_data_or_cmd();
+	D7(0);D6(0);D5(1);D4(0);
+	lcd_send_pulse_for_update_data_or_cmd();
+	_delay_ms(5);
+    ///////////
 	Rw(0);
 	lcd_write_cmd(0x2);
 	lcd_write_cmd(0x28);  // 4data line
@@ -70,54 +77,32 @@ void lcd_write_char(uint8_t cmd){
 }
 
 
+
 void lcd_write_txt(uint8_t *x){
 	for(int i = 0; x[i] != '\0'; i++)
 		lcd_write_char(x[i]);
 }
 
-void lcd_write_number(uint16_t data){
+
+
+void lcd_write_number(uint32_t data){
 	IntToString(data,txt);
 	lcd_write_txt(txt);
 }
-
-void IntToString(uint16_t number, uint8_t *txt){
-	
-	if(number < 10){
-		txt[0] = number % 10 + 48;
-		txt[1] = '\0';
-	}
-	else if(number < 100){
-		txt[0] = number / 10 + 48;
-		txt[1] = number % 10 + 48;
-		txt[2] = '\0';
-	}
-	else if(number < 1000){
-		txt[0] = number / 100 + 48;
-		number = number % 100 ;
-		txt[1] = number / 10 + 48;
-		txt[2] = number % 10 + 48;
-		txt[3] = '\0';
-	}
-	else  if(number < 10000){
-		txt[0] = number / 1000 + 48;
-		number = number % 1000 ;
-		txt[1] = number / 100 + 48;
-		number = number % 100 ;
-		txt[2] = number / 10 + 48;
-		txt[3] = number % 10 + 48;
-		txt[4] = '\0';
-	}
-	else  if(number < 100000){
-		txt[0] = number / 10000 + 48;
-		number = number % 10000 ;
-		txt[1] = number / 1000 + 48;
-		number = number % 1000 ;
-		txt[2] = number / 100 + 48;
-		number = number % 100 ;
-		txt[3] = number / 10 + 48;
-		txt[4] = number % 10 + 48;
-		txt[5] = '\0';
-	}
+//98
+void IntToString(uint32_t number, uint8_t *txt){
+	uint8_t i,j;
+	if (number){
+		while(number){
+			txt[i++] = number%10 + 48;
+			number /= 10; 
+		}
+		for (j = 0; j < i; j++){
+	txt[j] = txt[i-j-1];
+		}
+	}	
+	else 
+	txt[0] = 48;
 }
 
 void lcd_send_pulse_for_update_data_or_cmd(){

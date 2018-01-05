@@ -9,10 +9,10 @@ void SPI_Master_Init()
 void SPI_Slave_Init()
   {
     DDRB =(1<<PB6);
-    SPCR|= (1<<SPE)|(1<<SPIE);
+    SPCR|= (1<<SPE);
   }
 
-uint8_t SPI_Send_Char(uint8_t data)
+uint8_t SPI_Tx_Rx(uint8_t data)
   {
     SPDR = data;
     while(!(SPSR & (1<<SPIF)));

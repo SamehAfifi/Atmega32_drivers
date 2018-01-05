@@ -8,15 +8,13 @@
 
 
 #include "UART.h"
-void Uart_init(uint16_t baud_rate){
+void Uart_init(){
 	// baud rate
-	uint16_t ubr = ((F_CPU)/(baud_rate*16UL)-1);
-	UBRRL = (uint8_t)ubr;
-	UBRRH = (uint8_t)(ubr >> 8);
+	UBRRL = 51;// baud rate 9600, F_CPU = 8Mhz
 
 	/* Enable receiver and transmitter */
-	UCSRB = (1<<RXEN)|(1<<TXEN);
-	UCSRC=(1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0);
+	UCSRB = (1<<RXEN) | (1<<TXEN); 
+	UCSRC = (1<<URSEL)| (1<<UCSZ1)|(1<<UCSZ0);
 }
 
 void Uart_Write(uint8_t data){
@@ -31,7 +29,7 @@ void Uart_Write_string(uint8_t *data){
 }
 
 uint8_t Uart_Read(){
-	while ( !(UCSRA & (1<<RXC)) );
+//	while ( !(UCSRA & (1<<RXC)) );
 	return UDR;
 }
 

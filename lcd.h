@@ -41,10 +41,10 @@ void lcd_write_char(uint8_t);
 void lcd_write_txt(uint8_t *);
 
 // write number 
-void lcd_write_number(uint16_t data);
+void lcd_write_number(uint32_t data);
 
 // to update data
 void lcd_send_pulse_for_update_data_or_cmd();
 
 //Convert from int to ascii string
-void IntToString(uint16_t number, uint8_t *txt);
+void IntToString(uint32_t number, uint8_t *txt);
