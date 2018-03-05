@@ -26,16 +26,24 @@ C0 //force cursor to beginning of 2nd line
 */
 
 #include "lcd.h"
-uint8_t txt[5];
-
 void lcd_init(){
 	INIT_PORT;
 	// To clear Data on the LCD at Startup
 	D7(0);D6(0);D5(1);D4(1);
-	lcd_send_pulse_for_update_data_or_cmd();
+
+	EN(1);
+	_delay_ms(1);
+	EN(0);
+	_delay_ms(1);
+
 	D7(0);D6(0);D5(1);D4(0);
-	lcd_send_pulse_for_update_data_or_cmd();
-	_delay_ms(5);
+
+	EN(1);
+	_delay_ms(1);
+	EN(0);
+	_delay_ms(1);
+////////////////////////////////
+	_delay_ms(10);
     ///////////
 	Rw(0);
 	lcd_write_cmd(0x2);
@@ -54,7 +62,10 @@ void lcd_write(uint8_t cmd){
 	D5(READBIT(cmd,5));
 	D4(READBIT(cmd,4));
 
-	lcd_send_pulse_for_update_data_or_cmd();
+	EN(1);
+	_delay_ms(1);
+	EN(0);
+	_delay_ms(1);
 
 	// read second 4 bit
 	D7(READBIT(cmd,3));
@@ -62,7 +73,10 @@ void lcd_write(uint8_t cmd){
 	D5(READBIT(cmd,1));
 	D4(READBIT(cmd,0));
 
-	lcd_send_pulse_for_update_data_or_cmd();
+	EN(1);
+	_delay_ms(1);
+	EN(0);
+	_delay_ms(1);
 }
 
 
@@ -86,28 +100,25 @@ void lcd_write_txt(uint8_t *x){
 
 
 void lcd_write_number(uint32_t data){
+	uint8_t txt[10];
 	IntToString(data,txt);
 	lcd_write_txt(txt);
 }
 //98
 void IntToString(uint32_t number, uint8_t *txt){
-	uint8_t i,j;
-	if (number){
+	uint8_t i = 0,j;
+	uint8_t txt1[10];
+	if (number){ //567
 		while(number){
-			txt[i++] = number%10 + 48;
+			txt1[i++] = number%10 + 48; 
 			number /= 10; 
 		}
 		for (j = 0; j < i; j++){
-	txt[j] = txt[i-j-1];
+	        txt[j] = txt1[i-j-1];
 		}
 	}	
 	else 
-	txt[0] = 48;
+	    txt[0] = 48;
+	txt[i] = '\0';
 }
 
-void lcd_send_pulse_for_update_data_or_cmd(){
-	EN(1);
-	_delay_ms(1);
-	EN(0);
-	_delay_ms(1);
-}

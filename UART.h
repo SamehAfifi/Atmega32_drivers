@@ -10,7 +10,7 @@
 #define UART_H_
 #include "std_macros.h"
 uint8_t Uart_Read();
-void Uart_init(uint16_t);
+void Uart_init();
 void Uart_Write(uint8_t);
 uint8_t Uart_available();
 void Uart_Write_string(uint8_t *data);

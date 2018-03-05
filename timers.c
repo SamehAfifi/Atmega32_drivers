@@ -30,7 +30,6 @@ uint64_t timer0_ms(){
 uint64_t timer0_ms_ocr(){
 	return ( t2 * 0.03125);  // 8 MHZ crystal ==>   250 / 8 * 10^-3
 }
-#define TOGBIT(REG,BIT)  (REG ^= 1 << BIT)
 
 ISR (TIMER0_OVF_vect){
 	t1++;

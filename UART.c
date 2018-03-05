@@ -29,7 +29,7 @@ void Uart_Write_string(uint8_t *data){
 }
 
 uint8_t Uart_Read(){
-//	while ( !(UCSRA & (1<<RXC)) );
+	while ( !(UCSRA & (1<<RXC)) );
 	return UDR;
 }
 
