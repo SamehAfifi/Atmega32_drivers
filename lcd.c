@@ -25,100 +25,127 @@ C0 //force cursor to beginning of 2nd line
 
 */
 
-#include "lcd.h"
-void lcd_init(){
-	INIT_PORT;
-	// To clear Data on the LCD at Startup
-	D7(0);D6(0);D5(1);D4(1);
+#include "LCD.h"
+#define CLEAR 0x01
+#define HOME 0x02
+#define SHIFT_CUR_L 0x10
+#define SHIFT_CUR_R 0x14
+#define SHIFT_DIS_L 0x18
+#define SHIFT_DIS_R 0x1C
+#define LINE_TWO 0xC0
+#define LINE_ONE 0x80
 
-	EN(1);
-	_delay_ms(1);
-	EN(0);
-	_delay_ms(1);
-
-	D7(0);D6(0);D5(1);D4(0);
-
-	EN(1);
-	_delay_ms(1);
-	EN(0);
-	_delay_ms(1);
-////////////////////////////////
-	_delay_ms(10);
-    ///////////
-	Rw(0);
-	lcd_write_cmd(0x2);
-	lcd_write_cmd(0x28);  // 4data line
-	lcd_write_cmd(0x01);
-	lcd_write_cmd(0x0c);  // display on cursor off
-	lcd_write_cmd(0x06);  // increment cursor right
-	lcd_write_cmd(0x80);  // set courser at the beginning of the first line
+void LCD_init(){
+	INIT_LCD();
+	LCD_write_command(0x3);
+	_delay_ms(4);
+	LCD_write_command(0x3);
+	_delay_ms(4);
+	LCD_write_command(0x3);
+	_delay_ms(4);
+	LCD_write_command(0x2);
+	LCD_write_command(0x28);
+	LCD_write_command(0x8);
+	LCD_write_command(0x1);
+	LCD_write_command(0x6);
+	LCD_write_command(0xc);
 	_delay_ms(20);
 }
 
-void lcd_write(uint8_t cmd){
-	// read first 4 bit
-	D7(READBIT(cmd,7)); 
-	D6(READBIT(cmd,6));
-	D5(READBIT(cmd,5));
-	D4(READBIT(cmd,4));
+void LCD_write_command(uint8_t cmd){ // 0x20 // 0b0010 0000
+	 RS(0);
+	 // send most byte
+	 D4(GETBIT(cmd,4));
+	 D5(GETBIT(cmd,5));
+	 D6(GETBIT(cmd,6));
+	 D7(GETBIT(cmd,7));
+	 EN(1);
+	 _delay_ms(1);
+	 EN(0);
+	 _delay_ms(1);
+	 
+	 // send least byte
+	 
+	 D4(GETBIT(cmd,0));
+	 D5(GETBIT(cmd,1));
+	 D6(GETBIT(cmd,2));
+	 D7(GETBIT(cmd,3));
+	 EN(1);
+	 _delay_ms(1);
+	 EN(0);
+	 _delay_ms(1);
+}
 
-	EN(1);
-	_delay_ms(1);
-	EN(0);
-	_delay_ms(1);
-
-	// read second 4 bit
-	D7(READBIT(cmd,3));
-	D6(READBIT(cmd,2));
-	D5(READBIT(cmd,1));
-	D4(READBIT(cmd,0));
-
-	EN(1);
-	_delay_ms(1);
-	EN(0);
-	_delay_ms(1);
+void LCD_write_char(uint8_t data){
+	 RS(1);
+	 // send most byte
+	 D4(GETBIT(data,4));
+	 D5(GETBIT(data,5));
+	 D6(GETBIT(data,6));
+	 D7(GETBIT(data,7));
+	 EN(1);
+	 _delay_ms(1);
+	 EN(0);
+	 _delay_ms(1);
+	 
+	 // send least byte
+	 
+	 D4(GETBIT(data,0));
+	 D5(GETBIT(data,1));
+	 D6(GETBIT(data,2));
+	 D7(GETBIT(data,3));
+	 EN(1);
+	 _delay_ms(1);
+	 EN(0);
+	 _delay_ms(1);	 
 }
 
 
-void lcd_write_cmd(uint8_t cmd){
-	RS(0); // Rs = 0
-	lcd_write(cmd);
-}
-
-void lcd_write_char(uint8_t cmd){
-	RS(1); // Rs = 1
-	lcd_write(cmd);
+void LCD_write_string(uint8_t txt[]){
+	for(uint8_t i = 0; txt[i] != '\0'; i++){
+		LCD_write_char(txt[i]);
+	}
 }
 
 
+/*
+1234 %10 --> 4
+1234 / 10 = 123
 
-void lcd_write_txt(uint8_t *x){
-	for(int i = 0; x[i] != '\0'; i++)
-		lcd_write_char(x[i]);
+123%10 --> 3
+123/10 = 12
+
+12%10 --> 2
+12/10 = 1
+
+1%10 --> 1
+1/10 = 0
+
+
+
+
+1 2 3 4
+1+48
+2+48
+3+48
+4+48
+
+*/
+void LCD_write_num(uint32_t num){
+	uint8_t txt[10] = {0};
+	int8_t i = 0;
+	if(num == 0) {
+		LCD_write_char('0');
+		return;
+	}		
+	for (i = 0; num != 0; i++ )
+	{
+		txt[i] = num%10 + 48;
+		num = num  / 10 ;
+	}
+	i--;
+	while(i >= 0){
+		LCD_write_char(txt[i]);
+		i--;
+	}
 }
-
-
-
-void lcd_write_number(uint32_t data){
-	uint8_t txt[10];
-	IntToString(data,txt);
-	lcd_write_txt(txt);
-}
-//98
-void IntToString(uint32_t number, uint8_t *txt){
-	uint8_t i = 0,j;
-	uint8_t txt1[10];
-	if (number){ //567
-		while(number){
-			txt1[i++] = number%10 + 48; 
-			number /= 10; 
-		}
-		for (j = 0; j < i; j++){
-	        txt[j] = txt1[i-j-1];
-		}
-	}	
-	else 
-	    txt[0] = 48;
-	txt[i] = '\0';
-}
-

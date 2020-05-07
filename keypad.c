@@ -1,27 +1,48 @@
+/*
+ * keypad.c
+ *
+ * Created: 3/30/2020 4:36:31 PM
+ *  Author: safifi
+ */ 
+
+
 #include "keypad.h"
-uint8_t keypad_matrix[]={
-	'1','2','3','4',
-	'5','6','7','8',
-	'9','A','B','C',
-	'D','E','F','G',
+
+const uint8_t keypad_matrix[] = {
+	'0','1','2','3',
+	'4','5','6','7',
+	'8','9','-','+',
+	'A','B','/','*'
 };
+
 void keypad_init(){
-	mykeypadport
-	pullup
+
+	CLRBIT(DDRD,2);
+	CLRBIT(DDRD,3);
+	CLRBIT(DDRD,4);
+	CLRBIT(DDRD,5);
+	PORTD |= 0b00111100; // internal pull up in case of protues
+	SETBIT(DDRB,4);
+	SETBIT(DDRB,5);
+	SETBIT(DDRB,6);
+	SETBIT(DDRB,7);
 }
-int8_t press(int8_t i){
-	if(!k5 )return keypad_matrix[0+i*4];
-	if(!k6 )return keypad_matrix[1+i*4];
-	if(!k7 )return keypad_matrix[2+i*4];
-	if(!k8 )return keypad_matrix[3+i*4];
-	_delay_ms(10);
+int8_t keypad_read(){
+
+	for(uint8_t i = 0; i < 4 ; i++){
+		PORTB = PORTB & 0b00001111;
+		if (i == 0) PORTB |= 0b11100000;
+		if (i == 1) PORTB |= 0b11010000;
+		if (i == 2) PORTB |= 0b10110000;
+		if (i == 3) PORTB |= 0b01110000;
+		
+		if (GETBIT(PIND,2) == 0) return keypad_matrix[0+4*i];
+		if (GETBIT(PIND,3) == 0) return keypad_matrix[1+4*i];
+		if (GETBIT(PIND,4) == 0) return keypad_matrix[2+4*i];
+		if (GETBIT(PIND,5) == 0) return keypad_matrix[3+4*i];
+		_delay_ms(1);
+	
+	}	
 	return -1;
-}
-int8_t keypad_click(){
-	int8_t k;
-	k1(0);k2(1);k3(1);k4(1);	k = press(0); if(k != -1)	return k;
-	k1(1);k2(0);k3(1);k4(1);	k = press(1); if(k != -1)	return k;
-	k1(1);k2(1);k3(0);k4(1);	k = press(2); if(k != -1)	return k;
-	k1(1);k2(1);k3(1);k4(0);	k = press(3); if(k != -1)	return k;
-	return k;
+
 }
