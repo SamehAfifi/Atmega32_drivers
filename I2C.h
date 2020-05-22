@@ -4,7 +4,7 @@
  * Created: 11/26/2014 6:45:32 PM
  *  Author: safifi
  */
-#ifndef I2C_MASTER_H
+#ifndef I2C_MASTER_
 #define I2C_MASTER_H
 
 #include "header.h"
