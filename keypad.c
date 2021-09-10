@@ -1,10 +1,9 @@
 /*
- * keypad.c
+ * Keypad.c
  *
- * Created: 3/30/2020 4:36:31 PM
+ * Created: 9/10/2021 10:31:31 AM
  *  Author: safifi
  */ 
-
 
 #include "keypad.h"
 
@@ -15,34 +14,27 @@ const uint8_t keypad_matrix[] = {
 	'A','B','/','*'
 };
 
-void keypad_init(){
-
-	CLRBIT(DDRD,2);
-	CLRBIT(DDRD,3);
-	CLRBIT(DDRD,4);
-	CLRBIT(DDRD,5);
-	PORTD |= 0b00111100; // internal pull up in case of protues
-	SETBIT(DDRB,4);
-	SETBIT(DDRB,5);
-	SETBIT(DDRB,6);
-	SETBIT(DDRB,7);
+void keypad_init(void){
+	INIT_KEYPAD();
 }
-int8_t keypad_read(){
 
-	for(uint8_t i = 0; i < 4 ; i++){
-		PORTB = PORTB & 0b00001111;
-		if (i == 0) PORTB |= 0b11100000;
-		if (i == 1) PORTB |= 0b11010000;
-		if (i == 2) PORTB |= 0b10110000;
-		if (i == 3) PORTB |= 0b01110000;
-		
-		if (GETBIT(PIND,2) == 0) return keypad_matrix[0+4*i];
-		if (GETBIT(PIND,3) == 0) return keypad_matrix[1+4*i];
-		if (GETBIT(PIND,4) == 0) return keypad_matrix[2+4*i];
-		if (GETBIT(PIND,5) == 0) return keypad_matrix[3+4*i];
-		_delay_ms(1);
+int8_t keypad_read(void){
 	
-	}	
-	return -1;
+	uint8_t i;
+	for(i = 0; i < 4; i++){
+		switch(i){
+			case 0: KP0(0); KP1(1); KP2(1); KP3(1); break;
+			case 1: KP0(1); KP1(0); KP2(1); KP3(1); break;
+			case 2: KP0(1); KP1(1); KP2(0); KP3(1); break;
+			case 3: KP0(1); KP1(1); KP2(1); KP3(0); break;
+		} 
 
+		if(KP4() == 0) return keypad_matrix[0+4*i];
+		if(KP5() == 0) return keypad_matrix[1+4*i];
+		if(KP6() == 0) return keypad_matrix[2+4*i];
+		if(KP7() == 0) return keypad_matrix[3+4*i];
+		
+		DELAY_MS(1);
+	}
+	return -1;	
 }
