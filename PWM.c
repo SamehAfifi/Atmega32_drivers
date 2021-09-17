@@ -1,45 +1,23 @@
 /*
  * PWM.c
  *
- * Created: 4/16/2020 3:49:09 PM
+ * Created: 9/17/2021 11:07:53 AM
  *  Author: safifi
  */ 
-#include "PWM.h"
+
+#include "headers.h"
+
+void PWM_OC1A_init(void){
+	SETBIT(DDRD,5); // OC1A output
+	TCCR1A |= 1<<COM1A1 | 1<<WGM11 | 1<<WGM10;
+	TCCR1B |= 1<<WGM12 | 1<<CS10;
+}
 /*
-non inverting
-10 bit fast PWM
-oc1a
+duty = OCR1A / 1023 * 100
+OCR1A = duty * 10.23
+
 */
 
-
-
-void PWM_init_timer1_oc1a(){
-	SETBIT(DDRD,5);
-	TCCR1A |= ((1<<WGM11)|(1<<WGM10)|(1<<COM1A1)); // phase correct PWM at OC1A
-	TCCR1B = 1<<WGM12 | 1<<CS10;
+void PWM_OC1A_set_duty(uint8_t duty){
+OCR1A = duty * 10.23;	
 }
-
-/*
-duty = (ocr1a / 1023) * 100
-OCR1A = duty* 10.23;
-*/
-void set_duty_oc1a(uint8_t duty){
-	OCR1A = duty* 10.23;
-}
-
-
-
-void PWM_init_timer1_oc1b(){
-	SETBIT(DDRD,4);
-	TCCR1A |= 1<<COM1B1 | 1<<WGM10 | 1<<WGM11;
-	TCCR1B = 1<<WGM12 | 1<<CS10;
-}
-
-/*
-duty = (ocr1b / 1023) * 100
-OCR1b = duty* 10.23;
-*/
-void set_duty_oc1b(uint8_t duty){
-	OCR1B = duty* 10.23;
-}
-

@@ -1,25 +1,23 @@
 /*
  * ADC.c
  *
- * Created: 4/12/2020 4:02:43 PM
+ * Created: 9/17/2021 12:49:05 PM
  *  Author: safifi
  */ 
 
 #include "ADC.h"
 
-void ADC_Init()
-	SETBIT(ADMUX,REFS0);
-	SETBIT(ADCSRA,ADEN);
-	
-	SETBIT(ADCSRA,ADPS0);
-	SETBIT(ADCSRA,ADPS1);
-	SETBIT(ADCSRA,ADPS2);	
+void ADC_init(void){
+	ADMUX = 1<<REFS0;
+	ADCSRA = 1<<ADEN | 1<<ADPS0 | 1<<ADPS1 | 1<<ADPS2;	 
 }
 
-uint16_t ADC_Read(uint8_t channel){
 
-	ADMUX= (ADMUX & 0xf0)| (channel & 0x0f);	/* Set input channel to read */
+uint16_t ADC_read(uint8_t ch){
+	ADMUX = ch | 1<<REFS0;
 	SETBIT(ADCSRA,ADSC); // start conversion
-	while(GETBIT(ADCSRA,ADSC) == 1){}
+	while(READBIT(ADCSRA,ADSC) == 1){}
+//	while(READBIT(ADCSRA,ADIF) == 0){}
+	
 	return ADC;
 }

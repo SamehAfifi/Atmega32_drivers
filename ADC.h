@@ -1,19 +1,31 @@
 /*
  * ADC.h
  *
- * Created: 4/12/2020 4:02:54 PM
+ * Created: 9/17/2021 12:49:17 PM
  *  Author: safifi
  */ 
 
 
 #ifndef ADC_H_
 #define ADC_H_
-#include "Header.h"
 
-void ADC_Init();
+#include "headers.h"
 
-uint16_t ADC_Read(uint8_t);
+/*****************************************************************************
+* Function Name: ADC_Init
+* Purpose      : Initialize ADC with AVCC, single conversion mode and ADC_freq = 125 Khz
+* Parameters   : void
+* Return value : void
+*****************************************************************************/
+void ADC_init(void);
 
+/*****************************************************************************
+* Function Name: ADC_Read
+* Purpose      : Trigger the ADC to start conversion (sync func)
+* Parameters   : uint8_t channel to get analog value from
+* Return value : void
+*****************************************************************************/
+uint16_t ADC_read(uint8_t ch);
 
 
 

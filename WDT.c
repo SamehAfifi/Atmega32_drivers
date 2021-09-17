@@ -6,16 +6,16 @@
  */ 
 #include "WDT.h"
 
-void WDT_ON()
+void WDT_on(void)
 {
 	/*
-	Watchdog timer enables with typical timeout period 2.1 
+	Watchdog timer enables with typical timeout period 1
 	second.
 	*/
-	WDTCR = (1<<WDE)|(1<<WDP2)|(1<<WDP1)|(1<<WDP0);
+	WDTCR = (1<<WDE)|(1<<WDP2)|(1<<WDP1);
 }
 
-void WDT_OFF()
+void WDT_off(void)
 {
 	/*
 	This function use for disable the watchdog timer.
